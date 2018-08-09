@@ -35,14 +35,46 @@ var RecipeApp = function () {
         recipes.push(recipe);
     };
 
-    var createIngredients = function(){
-        //add code
+    var findRecipeId = function (currentIngredient) {
+        var $clickedrecipe = $(currentIngredient).closest('.recipe')
+        var id = $clickedrecipe.data().id;
+        return id;
     };
 
+    var _findRecipeById = function (id) {
+        for (var i = 0; i < recipes.length; i += 1) {
+          if (recipes[i].id === id) {
+            return recipes[i];
+          }
+        }
+      }
+    
+    var createIngredients = function(text){
+        var ingredients = {
+            text: text,
+            ingId: ingId
+        }
+        ingId ++ 
+        return ingredients;
+    };
+    
+    var addIngredients = function(ingredient, id){
+        var newIngredient = createIngredients(ingredient)
+        var currentRecipe = _findRecipeById(id)
+
+        currentRecipe.ingredients.push(newIngredient)
+
+    }
+
     var _getIngredientsHTML = function(recipe){
+               
         var recipesHTML = "";
 
-        //add code
+        for (var x=0; x < recipe.ingredients.length; x ++){
+            var ingredient = recipe.ingredients[x].text
+            var ingredientHTML = '<li class="ingredient">' + ingredient + '</li>'
+            recipesHTML += ingredientHTML
+        }
         return recipesHTML;
     };
 
@@ -55,7 +87,7 @@ var RecipeApp = function () {
             var recipe = recipes[i];
 
             //return HTML for all ingredients
-            var ingredients = _getIngredientsHTML(); //add code
+            var ingredients = _getIngredientsHTML(recipe); //add code
 
             $recipes.append(
                 '<div class="recipe col-md-6  offset-md-3 img-fluid shadow" data-id="' + recipe.id + '">' + 
@@ -63,13 +95,13 @@ var RecipeApp = function () {
                     '<img class="recipe-img" src="' + recipe.image + '"/>' +
                     '<hr>' +
                     '<h5 class="font-italic font-bold text-center">ingredients</h5>' +
-                    '<div class="input-group mb-3">' +
+                    '<form class="input-group mb-3 ingredients-form">' +
                         '<div class="input-group-prepend">' +
-                            '<span class="add-ingredients input-group-text" id="basic-addon3">Add Ingredients</span>' +
+                            '<button class="add-ingredients input-group-text" type="button" id="basic-addon3">Add Ingredients</button>' +
                         '</div>' + 
-                        '<input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">' +
+                        '<input type="text" class="form-control ingredient-name" id="basic-url" aria-describedby="basic-addon3">' +
                         
-                    '</div>' +
+                    '</form>' +
                     '<ul class="ingredients">' + ingredients + '</ul>'+
                 '</div>'
             );
@@ -79,7 +111,9 @@ var RecipeApp = function () {
     return {
         createRecipe: createRecipe,
         renderRecipes: renderRecipes,
-        // createIngredients: createIngredients,
+        findRecipeId: findRecipeId,
+        createIngredients: createIngredients,
+        addIngredients: addIngredients
     }
 };
 
@@ -98,4 +132,14 @@ $('.add-recipe').on('click', function(){
     app.createRecipe(name, image);
     app.renderRecipes();
 });
+
+//add ingredients to a recepie
+$('.recipes').on('click','.add-ingredients',function(){
+    var ingredient = $(this).closest('.ingredients-form').find('.ingredient-name').val()
+    var recipeId = app.findRecipeId(this)
+    app.addIngredients(ingredient, recipeId);
+
+    app.renderRecipes();
+
+}) 
 
