@@ -48,6 +48,12 @@ var RecipeApp = function () {
           }
         }
       }
+
+    var removeRecipe = function(recipeId) {
+      var clickedRecipe = _findRecipeById(recipeId)
+
+      recipes.splice(recipes.indexOf(clickedRecipe), 1);
+    }
     
     var createIngredients = function(text){
         var ingredients = {
@@ -91,7 +97,9 @@ var RecipeApp = function () {
 
             $recipes.append(
                 '<div class="recipe col-md-6  offset-md-3 img-fluid shadow" data-id="' + recipe.id + '">' + 
-                    '<h4 class="text-capitalize font-italic text-center">' + recipe.name + '</h4>' +
+                    '<div class="remove btn btn-danger" type="button" > Remove </div>' + 
+                    '<h4 class="text-capitalize font-italic text-center">' + recipe.name + 
+                    '</h4>' + 
                     '<img class="recipe-img" src="' + recipe.image + '"/>' +
                     '<hr>' +
                     '<h5 class="font-italic font-bold text-center">ingredients</h5>' +
@@ -112,6 +120,7 @@ var RecipeApp = function () {
         createRecipe: createRecipe,
         renderRecipes: renderRecipes,
         findRecipeId: findRecipeId,
+        removeRecipe: removeRecipe,
         createIngredients: createIngredients,
         addIngredients: addIngredients
     }
@@ -141,5 +150,12 @@ $('.recipes').on('click','.add-ingredients',function(){
 
     app.renderRecipes();
 
-}) 
+})
+
+//remove a recipie
+$('.recipes').on('click', '.remove', function(){
+    var recipeId = app.findRecipeId(this)
+    app.removeRecipe(recipeId)
+    app.renderRecipes()
+})
 
